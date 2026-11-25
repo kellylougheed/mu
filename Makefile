@@ -1,6 +1,8 @@
 XARGS := xargs -0 $(shell test $$(uname) = Linux && echo -r)
 GREP_T_FLAG := $(shell test $$(uname) = Linux && echo -T)
 export PYFLAKES_BUILTINS=_
+MACOS_PIP_PLATFORM ?= macosx_10_12_x86_64
+export MACOS_PIP_PLATFORM
 
 all:
 	@echo "\nThere is no default Makefile target right now. Try:\n"
@@ -21,6 +23,7 @@ all:
 	@echo "make win32 - create a 32bit Windows installer for Mu."
 	@echo "make win64 - create a 64bit Windows installer for Mu."
 	@echo "make macos - create a macOS native application for Mu."
+	@echo "make macos-intel - create an Intel (x86_64) macOS application for Mu."
 	@echo "make video - create an mp4 video representing code commits.\n"
 
 clean:
@@ -114,10 +117,12 @@ macos: check
 	# Installing pup from a fork with the --pip-platform flag proof of concept
 	# and using it to install wheels for the `macosx_10_12_x86_64` platform
 	./venv-pup/bin/pip install git+https://github.com/carlosperate/pup.git@pip-platform
-	./venv-pup/bin/pup package --launch-module=mu --nice-name="Mu Editor" --icon-path=./package/icons/mac_icon.icns --license-path=./LICENSE --pip-platform=macosx_10_12_x86_64 .
+	./venv-pup/bin/pup package --launch-module=mu --nice-name="Mu Editor" --icon-path=./package/icons/mac_icon.icns --license-path=./LICENSE --pip-platform=$(MACOS_PIP_PLATFORM) .
 	rm -r venv-pup
 	ls -la ./build/pup/
 	ls -la ./dist/
+
+macos-intel: macos
 
 linux: check
 	@echo "\nFetching wheels."

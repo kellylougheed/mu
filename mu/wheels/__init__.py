@@ -67,11 +67,15 @@ def os_compatibility_flags():
     """
     extra_flags = []
     # For macOS the oldest supported version is 10.12 Sierra, as that's the
-    # oldest version supported by PyQt5 v5.13
+    # oldest version supported by PyQt5 v5.13. The default target is Apple
+    # Intel (x86_64); MACOS_PIP_PLATFORM can override this for other builds.
     if sys.platform == "darwin":
+        macos_platform = os.environ.get(
+            "MACOS_PIP_PLATFORM", "macosx_10_12_x86_64"
+        )
         extra_flags.extend(
             [
-                "--platform=macosx_10_12_x86_64",
+                "--platform=" + macos_platform,
                 "--only-binary=:all:",
             ]
         )
